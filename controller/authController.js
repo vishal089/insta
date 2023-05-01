@@ -109,14 +109,15 @@ exports.sendOTP = async (req, res) => {
 
     const expiry = addMinute(currentTime, 5);
     console.log('expiry=>',expiry);
-    const OTP = OtpGenerator.generate(6);
+    const OTP = OtpGenerator.generate(6,{digits:true,lowerCaseAlphabets:false,upperCaseAlphabets:false,specialChars:false});
     const enc_OTP = await bcrypt.hash(OTP, saltRounds);
 
     try {
         const doc = await OTPModel.findOneAndUpdate({phone:phone},{
             phone: phone,
             OTP: enc_OTP,
-            expiry: expiry
+            expiry: expiry,
+            verified:false
         },{new:true,upsert:true});
 
         if (doc) {
@@ -186,11 +187,20 @@ exports.verifyOTP =async (req,res)=>{
     try{
         const doc = await OTPModel.findById(id);
         if(checkOTPValid(Number(currentTime),Number(doc.expiry))){
+            if(doc.verified == true){
+                return res.status(200).json({
+                    status:false,
+                    Message:"OTP is already Verified"
+                })
+            }
             let verifyOTP =await bcrypt.compare(OTP,doc.OTP);
             if(verifyOTP){
-                return res.status(200).json({
-                    status:true,
-                    message:"OTP verified Successfully"
+                doc.verified = true;
+                doc.save().then((result)=>{
+                    return res.status(200).json({
+                        status:true,
+                        message:"OTP verified Successfully"
+                    })
                 })
             }else{
                 return res.status(200).json({
