@@ -39,10 +39,12 @@ const OTPSchema = new mongoose.Schema({
         type:Date,
         default:Date.now
     }
-})
+});
+
+
 
 const userModel = mongoose.model('User',userSchema);
 const OTPModel = mongoose.model('OTP',OTPSchema);
 
 
-module.exports = {userModel,OTPModel}
+module.exports = {userModel,OTPModel,userInfoModel}

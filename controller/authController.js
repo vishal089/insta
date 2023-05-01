@@ -222,9 +222,6 @@ exports.verifyOTP =async (req,res)=>{
     }
 }
 
-
-
-
 function addMinute(date, minute) {
     return date.getTime() + minute * 60 * 1000;
 }
