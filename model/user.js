@@ -47,4 +47,4 @@ const userModel = mongoose.model('User',userSchema);
 const OTPModel = mongoose.model('OTP',OTPSchema);
 
 
-module.exports = {userModel,OTPModel,userInfoModel}
+module.exports = {userModel,OTPModel}

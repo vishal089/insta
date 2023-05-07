@@ -17,6 +17,12 @@ const UserInfoSchema = new mongoose.Schema({
     createdAt:{
         type:Date,
         default:Date.now
+    },
+    follower:{
+        type:[String],
+    },
+    following:{
+        type:[String]
     }
 });
 
