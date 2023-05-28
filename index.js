@@ -3,12 +3,17 @@ const app = express();
 const http = require('http').createServer(app);
 const { Server } = require('socket.io')
 const io = new Server(http);
+const { createHandler } = require('graphql-http/lib/use/express');
 const mongoose = require('mongoose');
 const authRoute = require('./routes/authRoute');
 const userRoute = require('./routes/userRoute');
 const reqRoute = require('./routes/reqRoute');
 const { socketModel , reqModel } = require('./model/request');
-const userInfoModel = require('./model/userInfo')
+const userInfoModel = require('./model/userInfo');
+const schema = require("./graphqlSchema/schema");
+const {verify} = require("./middleware/authorization");
+const csvRouter = require("./routes/csvRoute");
+
 
 require('dotenv').config();
 var URI = process.env.URI;
@@ -17,8 +22,11 @@ var PORT = process.env.PORT || 8000;
 app.use(express.json());
 
 app.use('/api/v1/authenticate', authRoute);
-app.use('/api/v1/user', userRoute);
-app.use('/api/v1/request',reqRoute);
+app.use('/api/v1/user',verify, userRoute);
+app.use('/api/v1/request',verify,reqRoute);
+app.use('/api/v1/csv',csvRouter);
+
+app.all('/graphql',createHandler({schema}))
 
 io.on("connection",async (socket) => {
     // console.log('socket=>', socket.id)
@@ -83,6 +91,8 @@ async function addToUserDb(obj){
         return -1
     }
 }
+
+
 
 
 
