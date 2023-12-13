@@ -96,6 +96,6 @@ async function addToUserDb(obj){
 
 
 
-http.listen(PORT, () => {
+http.listen(5000, () => {
     console.log(`App listen to port ${PORT}`);
 })
